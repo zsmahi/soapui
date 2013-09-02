@@ -5,7 +5,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.smartbear.soapui</groupId>
     <artifactId>soapui</artifactId>
@@ -100,7 +100,8 @@
                 <configuration>
                     <systemProperties>
                         <!-- Only log errors and only log to the console to decrease the log verbosity -->
-                        <soapui.log4j.config>${project.build.testOutputDirectory}/config/soapui-test-log4j.xml</soapui.log4j.config>
+                        <soapui.log4j.config>${project.build.testOutputDirectory}/config/soapui-test-log4j.xml
+                        </soapui.log4j.config>
                     </systemProperties>
                 </configuration>
             </plugin>
@@ -116,7 +117,8 @@
                 <version>2.12.1</version>
                 <configuration>
                     <systemProperties>
-                        <soapui.log4j.config>${project.build.testOutputDirectory}/config/soapui-test-log4j.xml</soapui.log4j.config>
+                        <soapui.log4j.config>${project.build.testOutputDirectory}/config/soapui-test-log4j.xml
+                        </soapui.log4j.config>
                     </systemProperties>
                     <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
@@ -643,7 +645,11 @@
             <artifactId>ws-commons-util</artifactId>
             <version>1.0.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.btr</groupId>
+            <artifactId>proxy-vole</artifactId>
+            <version>20121203</version>
+        </dependency>
 
 
         <!-- TODO Not sure if thease are needed -->
