@@ -59,6 +59,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import com.eviware.soapui.impl.actions.NewGenericProjectAction;
 import com.google.common.base.Objects;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -185,7 +186,7 @@ public class SoapUI
 	@SuppressWarnings("deprecation")
 	public static String PUSH_PAGE_URL = "http://soapui.org/Appindex/soapui-starterpage.html?version="
 			+ URLEncoder.encode( SOAPUI_VERSION );
-	public static String FRAME_ICON = "/16-perc.gif";
+	public static String FRAME_ICON = "/soapui-icon.png";
 	public static String PUSH_PAGE_ERROR_URL = "file://" + System.getProperty( "soapui.home", "." )
 			+ "/starter-page.html";
 
@@ -1562,12 +1563,12 @@ public class SoapUI
 		public NewWsdlProjectActionDelegate()
 		{
 			putValue( Action.SMALL_ICON, UISupport.createImageIcon( "/project.gif" ) );
-			putValue( Action.SHORT_DESCRIPTION, "Creates a new soapUI Project" );
+			putValue( Action.SHORT_DESCRIPTION, "Creates a new generic project" );
 		}
 
 		public void actionPerformed( ActionEvent e )
 		{
-			SoapUI.getActionRegistry().getAction( NewWsdlProjectAction.SOAPUI_ACTION_ID ).perform( workspace, null );
+			SoapUI.getActionRegistry().getAction( NewGenericProjectAction.SOAPUI_ACTION_ID ).perform( workspace, null );
 		}
 	}
 
