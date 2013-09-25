@@ -14,6 +14,7 @@ package com.eviware.soapui.impl.wsdl.panels.teststeps.support;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -163,10 +164,13 @@ public class PropertyHolderTable extends JPanel
 		{
 			super( propertiesModel );
 			setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-			// setAutoStartEditOnKeyStroke( true );
 			setSurrendersFocusOnKeystroke( true );
 			setRowHeight( 19 );
-			// setHorizontalScrollEnabled(true);
+			if (UISupport.isMac())
+			{
+				setShowGrid( false );
+				setIntercellSpacing( new Dimension(0, 0) );
+			}
 		}
 
 		@Override

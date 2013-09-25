@@ -15,6 +15,7 @@ package com.eviware.soapui.support.components;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -479,33 +480,6 @@ public class JPropertiesTable<T> extends JPanel
 		}
 	}
 
-	/*
-	 * defaultcelleditor private class PropertiesTableCellEditor extends
-	 * AbstractCellEditor implements TableCellEditor { private JTextField
-	 * textField; private JComboBox comboBox; private JComponent current;
-	 * 
-	 * public PropertiesTableCellEditor() { textField = new JTextField();
-	 * comboBox = new JComboBox();
-	 * comboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE); }
-	 * 
-	 * public Component getTableCellEditorComponent(JTable table, Object value,
-	 * boolean isSelected, int row, int column) { PropertyDescriptor descriptor =
-	 * tableModel.getPropertyDescriptorAt( row );
-	 * 
-	 * if( descriptor.hasOptions()) { comboBox.setModel( new
-	 * DefaultComboBoxModel( descriptor.getOptions() ));
-	 * comboBox.setSelectedItem( value ); current = comboBox; } else {
-	 * textField.setText( value == null ? "" : value.toString() ); current =
-	 * textField; }
-	 * 
-	 * current.setBorder( null ); current.setBackground( Color.WHITE );
-	 * 
-	 * return current; }
-	 * 
-	 * public Object getCellEditorValue() { return current == comboBox ?
-	 * comboBox.getSelectedItem() : textField.getText(); } }
-	 */
-
 	/**
 	 * Formatter used for displaying property values
 	 * 
@@ -546,8 +520,6 @@ public class JPropertiesTable<T> extends JPanel
 		{
 			super( tableModel );
 
-			// setAutoStartEditOnKeyStroke( true );
-
 			getActionMap().put( TransferHandler.getCopyAction().getValue( Action.NAME ), new AbstractAction()
 			{
 				public void actionPerformed( ActionEvent e )
@@ -562,12 +534,11 @@ public class JPropertiesTable<T> extends JPanel
 			} );
 
 			putClientProperty( "terminateEditOnFocusLost", Boolean.TRUE );
-			/*
-			 * addFocusListener( new FocusAdapter() {
-			 * 
-			 * public void focusLost(FocusEvent e) { if( isEditing() &&
-			 * getCellEditor() != null ) getCellEditor().stopCellEditing(); }} );
-			 */
+			if (UISupport.isMac())
+			{
+				setShowGrid( false );
+				setIntercellSpacing( new Dimension(0, 0) );
+			}
 		}
 
 		@Override
