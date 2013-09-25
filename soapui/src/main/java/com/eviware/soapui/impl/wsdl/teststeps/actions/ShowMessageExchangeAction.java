@@ -31,6 +31,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.eviware.soapui.support.swing.JTableFactory;
 import org.jdesktop.swingx.JXTable;
 
 import com.eviware.soapui.SoapUI;
@@ -176,7 +177,7 @@ public class ShowMessageExchangeAction extends AbstractAction
 			properties.put( "Timestamp", new Date( messageExchange.getTimestamp() ).toString() );
 			properties.put( "Time Taken", String.valueOf( messageExchange.getTimeTaken() ) );
 		}
-		JTable table = new JTable( new StringToStringMapTableModel( properties, "Name", "Value", false ) );
+		JTable table = JTableFactory.getInstance().makeJTable( new StringToStringMapTableModel( properties, "Name", "Value", false ) );
 		return new JScrollPane( table );
 	}
 

@@ -37,14 +37,7 @@ public abstract class JTableFactory
 				public Component prepareRenderer( TableCellRenderer renderer, int row, int column )
 				{
 					Component defaultRenderer = super.prepareRenderer( renderer, row, column );
-					if( row % 2 == 1 )
-					{
-						defaultRenderer.setBackground( new Color( 241, 244, 247 ) );
-					}
-					else
-					{
-						defaultRenderer.setBackground( Color.WHITE );
-					}
+					applyStripesToRenderer( row, defaultRenderer );
 					return defaultRenderer;
 				}
 
@@ -57,6 +50,18 @@ public abstract class JTableFactory
 			stripedTable.setShowGrid( false );
 			stripedTable.setIntercellSpacing( new Dimension(0, 0) );
 			return stripedTable;
+		}
+	}
+
+	public static void applyStripesToRenderer( int row, Component defaultRenderer )
+	{
+		if( row % 2 == 1 )
+		{
+			defaultRenderer.setBackground( new Color( 241, 244, 247 ) );
+		}
+		else
+		{
+			defaultRenderer.setBackground( Color.WHITE );
 		}
 	}
 }

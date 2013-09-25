@@ -28,6 +28,7 @@ import com.eviware.soapui.support.editor.EditorView;
 import com.eviware.soapui.support.editor.inspectors.AbstractXmlInspector;
 import com.eviware.soapui.support.editor.views.xml.raw.RawXmlEditorFactory;
 import com.eviware.soapui.support.editor.xml.XmlDocument;
+import com.eviware.soapui.support.swing.JTableFactory;
 import com.eviware.soapui.support.types.StringToStringMap;
 
 public class JMSHeaderAndPropertyInspector extends AbstractXmlInspector implements PropertyChangeListener
@@ -65,7 +66,7 @@ public class JMSHeaderAndPropertyInspector extends AbstractXmlInspector implemen
 				setTitle( "JMS (" + ( map == null ? "0" : map.size() ) + ")" );
 			}
 		} );
-		headersTable = new JTable( headersTableModel );
+		headersTable = JTableFactory.getInstance().makeJTable( headersTableModel );
 
 		panel = new JPanel( new BorderLayout() );
 		panel.add( new JScrollPane( headersTable ), BorderLayout.CENTER );

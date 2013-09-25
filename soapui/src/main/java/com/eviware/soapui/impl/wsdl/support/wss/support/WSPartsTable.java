@@ -33,6 +33,7 @@ import javax.swing.table.AbstractTableModel;
 import com.eviware.soapui.impl.wsdl.support.wss.entries.WssEntryBase;
 import com.eviware.soapui.support.UISupport;
 import com.eviware.soapui.support.components.JXToolBar;
+import com.eviware.soapui.support.swing.JTableFactory;
 import com.eviware.soapui.support.types.StringToStringMap;
 
 public class WSPartsTable extends JPanel
@@ -50,7 +51,7 @@ public class WSPartsTable extends JPanel
 		this.entry = entry;
 
 		partsTableModel = new PartsTableModel();
-		partsTable = new JTable( partsTableModel );
+		partsTable = JTableFactory.getInstance().makeJTable( partsTableModel );
 		partsTable.getSelectionModel().addListSelectionListener( new ListSelectionListener()
 		{
 

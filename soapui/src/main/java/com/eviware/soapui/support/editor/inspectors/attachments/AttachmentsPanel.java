@@ -56,6 +56,7 @@ import com.eviware.soapui.support.StringUtils;
 import com.eviware.soapui.support.Tools;
 import com.eviware.soapui.support.UISupport;
 import com.eviware.soapui.support.components.JXToolBar;
+import com.eviware.soapui.support.swing.JTableFactory;
 
 /**
  * Utility Panel for displaying a table of attachments
@@ -158,7 +159,7 @@ public class AttachmentsPanel extends javax.swing.JPanel
 	{
 		jScrollPane1 = new javax.swing.JScrollPane();
 		tableModel = new AttachmentsTableModel( container );
-		fileTable = new JTable( tableModel );
+		fileTable = JTableFactory.getInstance().makeJTable( tableModel );
 
 		if( container instanceof MutableAttachmentContainer )
 		{

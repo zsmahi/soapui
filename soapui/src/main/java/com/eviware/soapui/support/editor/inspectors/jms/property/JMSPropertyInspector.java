@@ -36,6 +36,7 @@ import com.eviware.soapui.support.editor.EditorView;
 import com.eviware.soapui.support.editor.inspectors.AbstractXmlInspector;
 import com.eviware.soapui.support.editor.views.xml.raw.RawXmlEditorFactory;
 import com.eviware.soapui.support.editor.xml.XmlDocument;
+import com.eviware.soapui.support.swing.JTableFactory;
 
 public class JMSPropertyInspector extends AbstractXmlInspector implements PropertyChangeListener
 {
@@ -74,7 +75,7 @@ public class JMSPropertyInspector extends AbstractXmlInspector implements Proper
 			}
 		} );
 
-		headersTable = new JTable( headersTableModel );
+		headersTable = JTableFactory.getInstance().makeJTable( headersTableModel );
 
 		panel = new JPanel( new BorderLayout() );
 		panel.add( new JScrollPane( headersTable ), BorderLayout.CENTER );

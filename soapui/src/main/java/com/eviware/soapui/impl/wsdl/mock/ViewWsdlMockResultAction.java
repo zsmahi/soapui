@@ -28,6 +28,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 
+import com.eviware.soapui.support.swing.JTableFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -115,7 +116,7 @@ public class ViewWsdlMockResultAction extends AbstractAction
 		scrollPane.setFoldIndicatorEnabled( true );
 		scrollPane.setLineNumbersEnabled( true );
 
-		JSplitPane split = UISupport.createVerticalSplit( new JScrollPane( new JTable( new StringToStringsMapTableModel(
+		JSplitPane split = UISupport.createVerticalSplit( new JScrollPane( JTableFactory.getInstance().makeJTable( new StringToStringsMapTableModel(
 				result.getResponseHeaders(), "Header", "Value", false ) ) ), scrollPane );
 		split.setDividerLocation( 150 );
 		return split;
@@ -132,7 +133,7 @@ public class ViewWsdlMockResultAction extends AbstractAction
 		RTextScrollPane scrollPane = new RTextScrollPane( resultArea );
 		scrollPane.setFoldIndicatorEnabled( true );
 		scrollPane.setLineNumbersEnabled( true );
-		JSplitPane split = UISupport.createVerticalSplit( new JScrollPane( new JTable( new StringToStringsMapTableModel(
+		JSplitPane split = UISupport.createVerticalSplit( new JScrollPane( JTableFactory.getInstance().makeJTable( new StringToStringsMapTableModel(
 				result.getMockRequest().getRequestHeaders(), "Header", "Value", false ) ) ), scrollPane );
 		split.setDividerLocation( 150 );
 		return split;

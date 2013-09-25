@@ -33,6 +33,7 @@ import com.eviware.soapui.impl.rest.RestRepresentation;
 import com.eviware.soapui.support.StringUtils;
 import com.eviware.soapui.support.UISupport;
 import com.eviware.soapui.support.components.JXToolBar;
+import com.eviware.soapui.support.swing.JTableFactory;
 import com.eviware.soapui.support.types.StringList;
 
 public class RestRepresentationsTable extends JPanel implements PropertyChangeListener
@@ -53,7 +54,7 @@ public class RestRepresentationsTable extends JPanel implements PropertyChangeLi
 		this.readOnly = readOnly;
 
 		tableModel = new RepresentationsTableModel();
-		representationsTable = new JTable( tableModel );
+		representationsTable = JTableFactory.getInstance().makeJTable(  tableModel );
 		representationsTable.setRowHeight( 18 );
 
 		add( buildToolbar(), BorderLayout.NORTH );

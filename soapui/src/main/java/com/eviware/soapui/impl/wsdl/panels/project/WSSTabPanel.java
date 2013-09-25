@@ -59,6 +59,7 @@ import com.eviware.soapui.support.StringUtils;
 import com.eviware.soapui.support.UISupport;
 import com.eviware.soapui.support.components.JXToolBar;
 
+import com.eviware.soapui.support.swing.JTableFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 // FIXME Consider splitting this up into smaller entities for each main inner component and put all actions into separate files
@@ -154,7 +155,7 @@ public class WSSTabPanel extends JPanel
 
 	private JPanel buildOutgoingConfigurationsTab()
 	{
-		outgoingWssTable = new JTable( new OutgoingWssTableModel() );
+		outgoingWssTable = JTableFactory.getInstance().makeJTable( new OutgoingWssTableModel() );
 		outgoingWssTable.getSelectionModel().addListSelectionListener( new ListSelectionListener()
 		{
 			public void valueChanged( ListSelectionEvent e )
@@ -280,7 +281,7 @@ public class WSSTabPanel extends JPanel
 
 	private JPanel buildIncomingConfigurationsTab()
 	{
-		incomingWssTable = new JTable( new IncomingWssTableModel() );
+		incomingWssTable = JTableFactory.getInstance().makeJTable( new IncomingWssTableModel() );
 		incomingWssTable.getSelectionModel().addListSelectionListener( new ListSelectionListener()
 		{
 			public void valueChanged( ListSelectionEvent e )
@@ -325,7 +326,7 @@ public class WSSTabPanel extends JPanel
 
 	private JPanel buildCryptoTable( final CryptoType cryptoType )
 	{
-		final JTable cryptoTable = new JTable( new CryptoTableModel( cryptoType ) );
+		final JTable cryptoTable = JTableFactory.getInstance().makeJTable( new CryptoTableModel( cryptoType ) );
 
 		switch( cryptoType )
 		{

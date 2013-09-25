@@ -26,6 +26,7 @@ import javax.swing.table.AbstractTableModel;
 import com.eviware.soapui.SoapUI;
 import com.eviware.soapui.impl.wsdl.WsdlInterface;
 import com.eviware.soapui.support.UISupport;
+import com.eviware.soapui.support.swing.JTableFactory;
 import com.eviware.soapui.support.types.StringToStringMap;
 import com.eviware.x.form.XForm.ToolkitType;
 import com.eviware.x.impl.swing.AbstractSwingXFormField;
@@ -51,7 +52,7 @@ public class NamespaceTable extends AbstractSwingXFormField<JPanel>
 		this.iface = iface;
 
 		namespaceTableModel = new NamespaceTableModel();
-		table = new JTable( namespaceTableModel );
+		table = JTableFactory.getInstance().makeJTable( namespaceTableModel );
 		scrollPane = new JScrollPane( table );
 		scrollPane.setPreferredSize( new Dimension( 400, 150 ) );
 		getComponent().add( scrollPane, BorderLayout.CENTER );

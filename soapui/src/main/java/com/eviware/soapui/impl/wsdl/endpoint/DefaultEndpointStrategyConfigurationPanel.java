@@ -59,6 +59,7 @@ import com.eviware.soapui.model.testsuite.TestSuite;
 import com.eviware.soapui.support.UISupport;
 import com.eviware.soapui.support.components.JXToolBar;
 import com.eviware.soapui.support.components.MetricsPanel;
+import com.eviware.soapui.support.swing.JTableFactory;
 import com.l2fprod.common.swing.renderer.DefaultCellRenderer;
 
 public class DefaultEndpointStrategyConfigurationPanel extends JPanel implements PropertyChangeListener
@@ -85,7 +86,7 @@ public class DefaultEndpointStrategyConfigurationPanel extends JPanel implements
 	private void buildUI()
 	{
 		tableModel = iface instanceof WsdlInterface ? new WsdlEndpointsTableModel() : new RestEndpointsTableModel();
-		table = new JTable( tableModel );
+		table = JTableFactory.getInstance().makeJTable( tableModel );
 
 		TableColumn passwordColumn = table.getColumnModel().getColumn( tableModel.getPasswordColumnIndex() );
 		JPasswordField textField = new JPasswordField();

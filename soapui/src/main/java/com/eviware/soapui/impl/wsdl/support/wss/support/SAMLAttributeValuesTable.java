@@ -31,6 +31,7 @@ import javax.swing.table.AbstractTableModel;
 import com.eviware.soapui.impl.wsdl.support.wss.entries.WssEntryBase;
 import com.eviware.soapui.support.UISupport;
 import com.eviware.soapui.support.components.JXToolBar;
+import com.eviware.soapui.support.swing.JTableFactory;
 import com.eviware.soapui.support.types.StringToStringMap;
 
 /**
@@ -54,7 +55,7 @@ public class SAMLAttributeValuesTable extends JPanel
 		this.entry = entry;
 
 		attributeValuesTableModel = new AttributeValuesTableModel();
-		attributeValuesTable = new JTable( attributeValuesTableModel );
+		attributeValuesTable = JTableFactory.getInstance().makeJTable( attributeValuesTableModel );
 		attributeValuesTable.setTableHeader( null );
 		attributeValuesTable.getSelectionModel().addListSelectionListener( new ListSelectionListener()
 		{

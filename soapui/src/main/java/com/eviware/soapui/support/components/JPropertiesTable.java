@@ -43,8 +43,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.eviware.soapui.support.UISupport;
+import com.eviware.soapui.support.swing.JTableFactory;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -565,6 +568,23 @@ public class JPropertiesTable<T> extends JPanel
 			 * public void focusLost(FocusEvent e) { if( isEditing() &&
 			 * getCellEditor() != null ) getCellEditor().stopCellEditing(); }} );
 			 */
+		}
+
+		@Override
+		public Component prepareRenderer( TableCellRenderer renderer, int row, int column )
+		{
+			Component defaultRenderer = super.prepareRenderer( renderer, row, column );
+			if( UISupport.isMac() )
+			{
+				JTableFactory.applyStripesToRenderer( row, defaultRenderer );
+			}
+			return defaultRenderer;
+		}
+
+		@Override
+		public boolean getShowVerticalLines()
+		{
+			return !UISupport.isMac();
 		}
 
 		public TableCellEditor getCellEditor( int row, int column )
