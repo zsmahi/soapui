@@ -307,7 +307,6 @@ public class SoapUI
 		frame.getContentPane().add( buildToolbar(), BorderLayout.NORTH );
 		frame.getContentPane().add( mainInspector.getComponent(), BorderLayout.CENTER );
 		frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
-		frame.setSize( 1000, 750 );
 
 		mainInspector.setDividerLocation( 250 );
 		mainInspector.setResizeWeight( 0.1 );
@@ -867,8 +866,6 @@ public class SoapUI
 			} );
 		}
 
-		frame.setSize( 1000, 750 );
-
 		String[] args2 = cmd.getArgs();
 		if( args2 != null && args2.length > 0 )
 		{
@@ -992,6 +989,13 @@ public class SoapUI
 		testMonitor.addTestMonitorListener( new LogDisablingTestMonitorListener() );
 		testMonitor.init( workspace );
 		frame.setVisible( true );
+		SwingUtilities.invokeLater( new Runnable()
+		{
+			public void run()
+			{
+				UISupport.maximizeWindow( frame );
+			}
+		} );
 
 		initAutoSaveTimer();
 		initGCTimer();
