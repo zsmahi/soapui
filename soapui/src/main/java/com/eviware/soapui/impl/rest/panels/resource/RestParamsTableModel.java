@@ -23,14 +23,36 @@ import static com.eviware.soapui.impl.rest.actions.support.NewRestResourceAction
 
 public class RestParamsTableModel extends DefaultPropertyTableHolderModel<RestParamsPropertyHolder>
 {
+
+	public static enum Mode
+	{
+		MINIMAL( new String[] { "Name", "Value" }, new Class[] { String.class, String.class } ),
+		FULL( COLUMN_NAMES, COLUMN_TYPES );
+
+		final String[] columnNames;
+		final Class[] columnTypes;
+
+		private Mode( String[] columnNames, Class[] columnTypes )
+		{
+			this.columnNames = columnNames;
+			this.columnTypes = columnTypes;
+		}
+	}
+
 	public static final int PARAM_LOCATION_COLUMN_INDEX = 3;
 	static String[] COLUMN_NAMES = new String[] { "Name", "Default value", "Style", "Level" };
 	static Class[] COLUMN_TYPES = new Class[] { String.class, String.class, ParameterStyle.class, ParamLocation.class };
 
+	private Mode mode;
+
 	public RestParamsTableModel( RestParamsPropertyHolder params )
 	{
+		this(params, Mode.FULL);
+	}
+	public RestParamsTableModel( RestParamsPropertyHolder params, Mode mode )
+	{
 		super( params );
-
+		this.mode = mode;
 		ModelItem parametersOwner = params.getModelItem();
 		if( parametersOwner != null )
 		{
@@ -42,7 +64,7 @@ public class RestParamsTableModel extends DefaultPropertyTableHolderModel<RestPa
 	@Override
 	public int getColumnCount()
 	{
-		return 4;
+		return mode.columnTypes.length;
 	}
 
 	@Override
@@ -52,7 +74,7 @@ public class RestParamsTableModel extends DefaultPropertyTableHolderModel<RestPa
 		{
 			return null;
 		}
-		return COLUMN_NAMES[columnIndex];
+		return mode.columnNames[columnIndex];
 	}
 
 	@Override
@@ -62,12 +84,12 @@ public class RestParamsTableModel extends DefaultPropertyTableHolderModel<RestPa
 		{
 			return null;
 		}
-		return COLUMN_TYPES[columnIndex];
+		return mode.columnTypes[columnIndex];
 	}
 
 	private boolean isColumnIndexOutOfBound( int columnIndex )
 	{
-		return ( columnIndex < 0 ) || ( columnIndex > 3 );
+		return columnIndex < 0 || columnIndex >= mode.columnTypes.length;
 	}
 
 	@Override
@@ -94,9 +116,9 @@ public class RestParamsTableModel extends DefaultPropertyTableHolderModel<RestPa
 			case 1:
 				return prop.getValue();
 			case 2:
-				return prop.getStyle();
+				return mode == Mode.MINIMAL ? null : prop.getStyle();
 			case 3:
-				return prop.getParamLocation();
+				return mode == Mode.MINIMAL ? null : prop.getParamLocation();
 		}
 
 		return null;
@@ -125,15 +147,20 @@ public class RestParamsTableModel extends DefaultPropertyTableHolderModel<RestPa
 				prop.setValue( value.toString() );
 				return;
 			case 2:
-				prop.setStyle( ( ParameterStyle )value );
+				if( mode == Mode.FULL )
+				{
+					prop.setStyle( ( ParameterStyle )value );
+				}
 				return;
 			case 3:
-				if( params.getModelItem() != null && params.getModelItem() instanceof RestRequest )
+				if( mode == Mode.FULL )
 				{
-					this.isLastChangeParameterLevelChange = true;
+					if( params.getModelItem() != null && params.getModelItem() instanceof RestRequest )
+					{
+						this.isLastChangeParameterLevelChange = true;
+					}
+					prop.setParamLocation( ( ParamLocation )value );
 				}
-				prop.setParamLocation( ( ParamLocation )value );
-				return;
 		}
 	}
 

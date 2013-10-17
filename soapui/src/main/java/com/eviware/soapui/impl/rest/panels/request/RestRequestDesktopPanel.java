@@ -1,40 +1,37 @@
 /*
- *  soapUI, copyright (C) 2004-2012 smartbear.com 
+ *  SoapUI, copyright (C) 2004-2012 smartbear.com
  *
- *  soapUI is free software; you can redistribute it and/or modify it under the 
+ *  SoapUI is free software; you can redistribute it and/or modify it under the
  *  terms of version 2.1 of the GNU Lesser General Public License as published by 
  *  the Free Software Foundation.
  *
- *  soapUI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ *  SoapUI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
  *  See the GNU Lesser General Public License for more details at gnu.org.
  */
 
 package com.eviware.soapui.impl.rest.panels.request;
 
-import javax.swing.*;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-
 import com.eviware.soapui.impl.rest.RestRequestInterface;
 import com.eviware.soapui.impl.rest.actions.request.AddRestRequestToTestCaseAction;
-import com.eviware.soapui.impl.rest.support.RestUtils;
-import com.eviware.soapui.impl.support.actions.ShowOnlineHelpAction;
 import com.eviware.soapui.impl.wsdl.support.HelpUrls;
 import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequestInterface;
-import com.eviware.soapui.support.DocumentListenerAdapter;
-import com.eviware.soapui.support.UISupport;
 import com.eviware.soapui.support.action.swing.SwingActionDelegate;
 import com.eviware.soapui.support.components.JXToolBar;
 
-import java.awt.*;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
 
 public class RestRequestDesktopPanel extends
 		AbstractRestRequestDesktopPanel<RestRequestInterface, RestRequestInterface>
 {
 	private JButton addToTestCaseButton;
 	protected TextPanelWithTopLabel resourcePanel;
-	protected TextPanelWithTopLabel queryPanel;
+	protected ParametersField queryPanel;
 
 	public RestRequestDesktopPanel( RestRequestInterface modelItem )
 	{
@@ -45,17 +42,8 @@ public class RestRequestDesktopPanel extends
 	protected void initializeFields()
 	{
 		String path = getRequest().getResource().getFullPath();
-		resourcePanel = new TextPanelWithTopLabel( "Resource", path, new DocumentListenerAdapter()
-		{
-			@Override
-			public void update( Document document )
-			{
-				getRequest().getResource().setPath( resourcePanel.getText() );
-			}
-		} );
-
-		String query = RestUtils.getQueryParamsString( getRequest().getParams(), getRequest() );
-		queryPanel = new TextPanelWithTopLabel( "Query", query, false );
+		resourcePanel = new TextPanelWithTopLabel( "Resource", path);
+		queryPanel = new ParametersField( getRequest() );
 	}
 
 	@Override
@@ -94,7 +82,7 @@ public class RestRequestDesktopPanel extends
 	protected void updateUiValues()
 	{
 		resourcePanel.setText( getRequest().getResource().getFullPath() );
-		resetQueryPanelText();
+		queryPanel.updateTextField();
 
 	}
 	
@@ -105,21 +93,11 @@ public class RestRequestDesktopPanel extends
 		toolbar.add( addToTestCaseButton );
 	}
 
-
-	private void resetQueryPanelText()
-	{
-			queryPanel.setText( RestUtils.getQueryParamsString( getRequest().getParams(), getRequest() ) );
-
-	}
-
 	protected class TextPanelWithTopLabel extends JPanel
 	{
-		private final Color MAC_DISABLED_BGCOLOR = new Color( 232, 232, 232 );
 
 		JLabel textLabel;
 		JTextField textField;
-
-
 
 		TextPanelWithTopLabel( String label, String text )
 		{
@@ -129,22 +107,6 @@ public class RestRequestDesktopPanel extends
 			super.setLayout( new BorderLayout() );
 			super.add( textLabel, BorderLayout.NORTH );
 			super.add( textField, BorderLayout.SOUTH );
-		}
-
-		public TextPanelWithTopLabel( String label, String text, boolean isEditable )
-		{
-			this( label, text );
-			textField.setEditable( isEditable );
-			if( !isEditable && UISupport.isMac() )
-			{
-				textField.setBackground( MAC_DISABLED_BGCOLOR );
-			}
-		}
-
-		public TextPanelWithTopLabel( String label, String text, DocumentListener documentListener )
-		{
-			this( label, text );
-			textField.getDocument().addDocumentListener( documentListener );
 		}
 
 

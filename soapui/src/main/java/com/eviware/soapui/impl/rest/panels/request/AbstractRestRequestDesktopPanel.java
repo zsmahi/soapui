@@ -1,20 +1,18 @@
 /*
- *  soapUI, copyright (C) 2004-2012 smartbear.com
+ *  SoapUI, copyright (C) 2004-2012 smartbear.com
  *
- *  soapUI is free software; you can redistribute it and/or modify it under the
+ *  SoapUI is free software; you can redistribute it and/or modify it under the
  *  terms of version 2.1 of the GNU Lesser General Public License as published by
  *  the Free Software Foundation.
  *
- *  soapUI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *  SoapUI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *  See the GNU Lesser General Public License for more details at gnu.org.
  */
 
 package com.eviware.soapui.impl.rest.panels.request;
 
-import com.eviware.soapui.impl.rest.RestMethod;
 import com.eviware.soapui.impl.rest.RestRequestInterface;
-import com.eviware.soapui.impl.rest.RestResource;
 import com.eviware.soapui.impl.rest.actions.request.AddRestRequestToTestCaseAction;
 import com.eviware.soapui.impl.rest.support.RestParamProperty;
 import com.eviware.soapui.impl.rest.support.RestParamsPropertyHolder;
@@ -22,7 +20,6 @@ import com.eviware.soapui.impl.rest.support.XmlBeansRestParamsTestPropertyHolder
 import com.eviware.soapui.impl.support.actions.ShowOnlineHelpAction;
 import com.eviware.soapui.impl.support.panels.AbstractHttpXmlRequestDesktopPanel;
 import com.eviware.soapui.impl.wsdl.WsdlSubmitContext;
-import com.eviware.soapui.impl.wsdl.teststeps.RestTestRequestInterface;
 import com.eviware.soapui.model.ModelItem;
 import com.eviware.soapui.model.iface.Interface;
 import com.eviware.soapui.model.iface.Request.SubmitException;
@@ -35,8 +32,16 @@ import com.eviware.soapui.support.action.swing.SwingActionDelegate;
 import com.eviware.soapui.support.components.JXToolBar;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -316,9 +321,6 @@ public abstract class AbstractRestRequestDesktopPanel<T extends ModelItem, T2 ex
 			case RESOURCE:
 				getRequest().getResource().removeProperty( propertytName );
 				break;
-			//case REQUEST:
-			//getRequest().removeProperty( propertytName );
-			//break;
 		}
 
 	}

@@ -31,12 +31,27 @@ import com.jgoodies.binding.PresentationModel;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlBeans;
 
-import javax.swing.*;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.xml.namespace.QName;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +75,14 @@ public class RestParamsTable extends JPanel
 	private final ParamLocation defaultParamLocation;
 	private boolean showEditableButtons;
 	private boolean showDefaultParamsButton;
+	private FocusAdapter focusAdapter = new FocusAdapter()
+	{
+		@Override
+		public void focusGained( FocusEvent e )
+		{
+			System.out.println( "Gained focus" );
+		}
+	};
 
 	public RestParamsTable( RestParamsPropertyHolder params, boolean showInspector, ParamLocation defaultParamLocation,
 									boolean showEditableButtons, boolean showDefaultParamsButton )
@@ -156,6 +179,13 @@ public class RestParamsTable extends JPanel
 		{
 			add( new JScrollPane( paramsTable ), BorderLayout.CENTER );
 		}
+	}
+
+	@Override
+	public synchronized void addKeyListener( KeyListener l )
+	{
+		super.addKeyListener( l );
+		paramsTable.addKeyListener( l );
 	}
 
 	private void initEditableButtons()
@@ -267,6 +297,24 @@ public class RestParamsTable extends JPanel
 			}
 		}
 	}
+
+	public void focusParameter(String parameterName)
+	{
+		paramsTable.grabFocus();
+		for (int i = 0; i < paramsTable.getRowCount(); i++)
+		{
+			 if (paramsTable.getValueAt(i, 0).equals(parameterName))
+			 {
+				 paramsTable.editCellAt( i, 1 );
+				 JTextField editorComponent = ( JTextField )paramsTable.getEditorComponent();
+				 editorComponent.grabFocus();
+				 editorComponent.selectAll();
+				 return;
+			 }
+		}
+
+	}
+
 
 	private class UpdateParamsAction extends AbstractAction
 	{
