@@ -31,19 +31,7 @@ import com.jgoodies.binding.PresentationModel;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlBeans;
 
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.xml.namespace.QName;
@@ -72,7 +60,6 @@ public class RestParamsTable extends JPanel
 	private PresentationModel<RestParamProperty> paramDetailsModel;
 	private StringListFormComponent optionsFormComponent;
 	private SimpleBindingForm detailsForm;
-	private final ParamLocation defaultParamLocation;
 	private boolean showEditableButtons;
 	private boolean showDefaultParamsButton;
 	private FocusAdapter focusAdapter = new FocusAdapter()
@@ -99,7 +86,6 @@ public class RestParamsTable extends JPanel
 		this.showDefaultParamsButton = showDefaultParamsButton;
 		this.params = params;
 		this.paramsTableModel = model;
-		this.defaultParamLocation = defaultParamLocation;
 		init( showInspector );
 	}
 
@@ -190,12 +176,7 @@ public class RestParamsTable extends JPanel
 
 	private void initEditableButtons()
 	{
-		addParamAction = AddParamAction.builder()
-				.withSmallIcon( "/add_property.gif" )
-				.withShortDescription( "Adds a parameter to the parameter table" )
-				.forTable( paramsTable )
-				.withPropertyHolder( params )
-				.build();
+		addParamAction = new AddParamAction( paramsTable, params, "Adds a parameter to the parameter table" );
 		removeParamAction = new RemovePropertyAction( paramsTable, params, "Removes the selected parameter" );
 		updateParamsAction = new UpdateParamsAction();
 
@@ -298,19 +279,19 @@ public class RestParamsTable extends JPanel
 		}
 	}
 
-	public void focusParameter(String parameterName)
+	public void focusParameter( String parameterName )
 	{
 		paramsTable.grabFocus();
-		for (int i = 0; i < paramsTable.getRowCount(); i++)
+		for( int i = 0; i < paramsTable.getRowCount(); i++ )
 		{
-			 if (paramsTable.getValueAt(i, 0).equals(parameterName))
-			 {
-				 paramsTable.editCellAt( i, 1 );
-				 JTextField editorComponent = ( JTextField )paramsTable.getEditorComponent();
-				 editorComponent.grabFocus();
-				 editorComponent.selectAll();
-				 return;
-			 }
+			if( paramsTable.getValueAt( i, 0 ).equals( parameterName ) )
+			{
+				paramsTable.editCellAt( i, 1 );
+				JTextField editorComponent = ( JTextField )paramsTable.getEditorComponent();
+				editorComponent.grabFocus();
+				editorComponent.selectAll();
+				return;
+			}
 		}
 
 	}
