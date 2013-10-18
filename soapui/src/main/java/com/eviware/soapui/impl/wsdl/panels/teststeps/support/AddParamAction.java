@@ -53,11 +53,6 @@ public class AddParamAction extends AbstractAction
 		{
 			public void run()
 			{
-				TableCellEditor cellEditor = parameterTable.getCellEditor();
-				if( cellEditor != null )
-				{
-					cellEditor.stopCellEditing();
-				}
 				editTableCell( row, 0 );
 				parameterTable.getModel().addTableModelListener( new TableModelListener()
 				{
@@ -78,6 +73,11 @@ public class AddParamAction extends AbstractAction
 		{
 			public void run()
 			{
+				TableCellEditor cellEditor = parameterTable.getCellEditor();
+				if( cellEditor != null )
+				{
+					cellEditor.stopCellEditing();
+				}
 				parameterTable.requestFocusInWindow();
 				parameterTable.scrollRectToVisible( parameterTable.getCellRect( row, column, true ) );
 				SwingUtilities.invokeLater( new Runnable()
