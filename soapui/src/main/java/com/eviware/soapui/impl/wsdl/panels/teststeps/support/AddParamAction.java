@@ -54,7 +54,7 @@ public class AddParamAction extends AbstractAction
 			public void run()
 			{
 				TableCellEditor cellEditor = parameterTable.getCellEditor();
-				if(cellEditor!=null)
+				if( cellEditor != null )
 				{
 					cellEditor.stopCellEditing();
 				}

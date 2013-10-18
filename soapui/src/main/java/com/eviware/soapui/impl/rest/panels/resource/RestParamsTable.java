@@ -290,6 +290,7 @@ public class RestParamsTable extends JPanel
 
 	}
 
+
 	private class UpdateParamsAction extends AbstractAction
 	{
 		private UpdateParamsAction()
