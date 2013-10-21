@@ -110,17 +110,14 @@ public class RestResourceEditor extends JTextField
 			{
 				if( !resourceOrParentHasProperty( restResource, p ) )
 				{
-					if( UISupport.confirm( "Add template parameter [" + p + "] to resource?", "Add Parameter" ) )
+					RestParamProperty property = restResource.addProperty( p );
+					property.setStyle( RestParamsPropertyHolder.ParameterStyle.TEMPLATE );
+					String value = UISupport.prompt( "Specify default value for parameter [" + p + "]",
+							"Add Parameter", "" );
+					if( value != null )
 					{
-						RestParamProperty property = restResource.addProperty( p );
-						property.setStyle( RestParamsPropertyHolder.ParameterStyle.TEMPLATE );
-						String value = UISupport.prompt( "Specify default value for parameter [" + p + "]",
-								"Add Parameter", "" );
-						if( value != null )
-						{
-							property.setDefaultValue( value );
-							property.setValue( value );
-						}
+						property.setDefaultValue( value );
+						property.setValue( value );
 					}
 				}
 			}
@@ -141,22 +138,19 @@ public class RestResourceEditor extends JTextField
 
 	private boolean isResourceLonely( RestResource restResource )
 	{
-		return restResource.getParentResource() == null && restResource.getChildResourceCount() == 0;
+		return restResource.getParentResource() == null;
 	}
 
 	public void openPopup( RestResource focusedResource )
 	{
+		final JPanel panel = createResourceEditorPanel( focusedResource );
 
-		OkAction okAction = new OkAction();
-		final JPanel panel = createResourceEditorPanel( focusedResource, okAction );
-
-		PopupWindow popupWindow = new PopupWindow( panel, okAction );
-		okAction.setPopupWindow( popupWindow );
+		PopupWindow popupWindow = new PopupWindow( panel );
 		moveWindowBelowTextField( popupWindow );
 		popupWindow.setVisible( true );
 	}
 
-	private JPanel createResourceEditorPanel( RestResource focusedResource, ActionListener okAction )
+	private JPanel createResourceEditorPanel( RestResource focusedResource )
 	{
 		final JPanel panel = new JPanel( new BorderLayout() );
 
@@ -187,7 +181,7 @@ public class RestResourceEditor extends JTextField
 				}
 				if( affectedRequestCount > 0 )
 				{
-					changeWarningLabel.setText( String.format( "<html>Changes will affect: <b>%d</b> request%s</html>",
+					changeWarningLabel.setText( String.format( "<html>Changes will affect <b>%d</b> request%s</html>",
 							affectedRequestCount, affectedRequestCount > 1 ? "s" : "" ) );
 					changeWarningLabel.setVisible( true );
 				}
@@ -211,7 +205,7 @@ public class RestResourceEditor extends JTextField
 				row.add( new JLabel( icon ) );
 			}
 
-			final RestSubResourceTextField restSubResourceTextField = new RestSubResourceTextField( restResource, okAction );
+			final RestSubResourceTextField restSubResourceTextField = new RestSubResourceTextField( restResource );
 			restSubResourceTextField.getTextField().getDocument().addDocumentListener( pathChangedListener );
 			restSubResourceTextFields.add( restSubResourceTextField );
 
@@ -254,13 +248,12 @@ public class RestResourceEditor extends JTextField
 		private JTextField textField;
 		private Integer affectedRequestCount;
 
-		private RestSubResourceTextField( RestResource restResource, ActionListener okAction )
+		private RestSubResourceTextField( RestResource restResource )
 		{
 			this.restResource = restResource;
 			textField = new JTextField( restResource.getPath() );
-			textField.setMaximumSize( new Dimension( 170, ( int )textField.getPreferredSize().getHeight() ) );
-			textField.setPreferredSize( new Dimension( 170, ( int )textField.getPreferredSize().getHeight() ) );
-			textField.addActionListener( okAction );
+			textField.setMaximumSize( new Dimension( 340, ( int )textField.getPreferredSize().getHeight() ) );
+			textField.setPreferredSize( new Dimension( 340, ( int )textField.getPreferredSize().getHeight() ) );
 		}
 
 		public JTextField getTextField()
@@ -301,7 +294,7 @@ public class RestResourceEditor extends JTextField
 	private class PopupWindow extends JDialog
 	{
 
-		private PopupWindow( final JPanel panel, Action okAction )
+		private PopupWindow( final JPanel panel )
 		{
 			super( SoapUI.getFrame() );
 			setModal( true );
@@ -312,7 +305,19 @@ public class RestResourceEditor extends JTextField
 			setContentPane( contentPane );
 
 
-			JButton okButton = new JButton( okAction );
+			JButton okButton = new JButton( new AbstractAction( "OK" )
+			{
+				@Override
+				public void actionPerformed( ActionEvent e )
+				{
+					for( RestSubResourceTextField restSubResourceTextField : restSubResourceTextFields )
+					{
+						restSubResourceTextField.getRestResource().setPath( restSubResourceTextField.getTextField().getText() );
+					}
+					scanForTemplateParameters();
+					dispose();
+				}
+			} );
 
 			AbstractAction cancelAction = new AbstractAction( "Cancel" )
 			{
@@ -330,6 +335,7 @@ public class RestResourceEditor extends JTextField
 			buttonBar.setLayout( new FlowLayout( FlowLayout.RIGHT ) );
 			contentPane.add( panel, BorderLayout.CENTER );
 			contentPane.add( buttonBar, BorderLayout.SOUTH );
+			getRootPane().setDefaultButton( okButton );
 
 			pack();
 		}
@@ -348,32 +354,4 @@ public class RestResourceEditor extends JTextField
 		}
 	}
 
-	private class OkAction extends AbstractAction {
-
-		private OkAction( )
-		{
-			super( "OK" );
-		}
-
-		private PopupWindow popupWindow;
-
-		public void setPopupWindow( PopupWindow popupWindow )
-		{
-			this.popupWindow = popupWindow;
-		}
-
-		@Override
-		public void actionPerformed( ActionEvent e )
-		{
-			for( RestSubResourceTextField restSubResourceTextField : restSubResourceTextFields )
-			{
-				restSubResourceTextField.getRestResource().setPath( restSubResourceTextField.getTextField().getText() );
-			}
-			scanForTemplateParameters();
-			if( popupWindow != null )
-			{
-				popupWindow.dispose();
-			}
-		}
-	}
 }

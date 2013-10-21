@@ -8,6 +8,7 @@ import com.eviware.soapui.impl.rest.actions.support.NewRestResourceActionBase;
 import com.eviware.soapui.impl.rest.panels.request.views.content.RestRequestContentView;
 import com.eviware.soapui.impl.rest.support.RestParamProperty;
 import com.eviware.soapui.impl.rest.support.RestParamsPropertyHolder;
+import com.eviware.soapui.impl.rest.support.RestUtils;
 import com.eviware.soapui.impl.support.EndpointsComboBoxModel;
 import com.eviware.soapui.support.SoapUIException;
 import com.eviware.soapui.support.UISupport;
@@ -22,16 +23,15 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.swing.JComboBox;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import static com.eviware.soapui.utils.ModelItemMatchers.hasParameter;
 import static com.eviware.soapui.utils.StubbedDialogs.hasPromptWithValue;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
@@ -104,12 +104,21 @@ public class RestRequestDesktopPanelTest
 
 		restRequest.getParams().getProperty( PARAMETER_NAME ).setStyle( RestParamsPropertyHolder.ParameterStyle.TEMPLATE );
 		// Assert that it adds the template parameter on the path
-		assertThat( requestDesktopPanel.resourcePanel.getText(), equalTo( path + "{" + PARAMETER_NAME + "}" ));
+		assertThat( requestDesktopPanel.resourcePanel.getText(), containsString( "{" + PARAMETER_NAME + "}" ));
 
 
 		restRequest.getParams().getProperty( PARAMETER_NAME ).setStyle( RestParamsPropertyHolder.ParameterStyle.QUERY );
-		// Assert that it removes the template parameter from the path
-		assertThat( requestDesktopPanel.resourcePanel.getText(), equalTo( path ));
+		assertThat( requestDesktopPanel.resourcePanel.getText(), not(containsString( "{" + PARAMETER_NAME + "}")));
+	}
+
+	@Test
+	public void extractsQueryStringParamsFromUrl() throws Exception
+	{
+		RestParamsPropertyHolder params = restRequest.getParams();
+		String url = restRequest.getEndpoint() + restRequest.getPath() + "?q=foo&page=2";
+		RestUtils.extractParams( url, params, true );
+		assertThat( params, hasParameter( "q" ) );
+		assertThat(params, hasParameter( "page" ));
 	}
 
 	@Test
@@ -135,7 +144,7 @@ public class RestRequestDesktopPanelTest
 
 		restRequest.getParams().getProperty( PARAMETER_NAME ).setStyle( RestParamsPropertyHolder.ParameterStyle.QUERY );
 
-		assertThat( requestDesktopPanel.resourcePanel.getText(), equalTo( parentPath ));
+		assertThat( requestDesktopPanel.resourcePanel.getText(), equalTo( parentPath ) );
 		assertThat( childRequestDesktopPanel.resourcePanel.getText(), equalTo( childResource.getFullPath() ));
 	}
 
@@ -228,27 +237,26 @@ public class RestRequestDesktopPanelTest
 
 		restRequest.getParams().getProperty( PARAMETER_NAME ).setStyle( RestParamsPropertyHolder.ParameterStyle.TEMPLATE );
 		// Assert that it adds the template parameter on the path
-		assertThat( restRequest.getResource().getPath(), equalTo( path + "{" + PARAMETER_NAME + "}"));
+		assertThat( restRequest.getResource().getPath(), containsString( "{" + PARAMETER_NAME + "}" ) );
 
 
 		restRequest.getParams().getProperty( PARAMETER_NAME ).setStyle( RestParamsPropertyHolder.ParameterStyle.QUERY );
-		// Assert that it removes the template parameter from the path
-		assertThat( restRequest.getResource().getPath(), equalTo( path ));
+		assertThat( restRequest.getResource().getPath(), not(containsString( PARAMETER_NAME )));
 	}
 
 	@Test
-	public void updatesExistingTemplateParamterName() throws Exception
+	public void updatesExistingTemplateParameterName() throws Exception
 	{
 
 		String newParamName = "sessionID";
 		String path = restRequest.getResource().getPath();
-		assertThat( ( String )requestDesktopPanel.resourcePanel.getText(), equalTo( path ) );
+		assertThat( requestDesktopPanel.resourcePanel.getText(), equalTo( path ) );
 
 		restRequest.getParams().getProperty( PARAMETER_NAME ).setStyle( RestParamsPropertyHolder.ParameterStyle.TEMPLATE );
 		restRequest.getParams().getProperty( PARAMETER_NAME ).setName( newParamName );
 
 		// Assert that parameter is replaced with new name
-		assertThat( ( String )requestDesktopPanel.resourcePanel.getText(), equalTo( path + "{" + newParamName + "}" ) );
+		assertThat( requestDesktopPanel.resourcePanel.getText(), equalTo( path + "{" + newParamName + "}" ) );
 	}
 
 	@Test

@@ -12,95 +12,116 @@
 
 package com.eviware.soapui.impl.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import com.eviware.soapui.impl.rest.support.RestParamProperty;
-import com.eviware.soapui.utils.ModelItemFactory;
-import junit.framework.JUnit4TestAdapter;
-
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.Ignore;
+import com.eviware.soapui.config.RestParameterConfig;
+import com.eviware.soapui.config.RestParametersConfig;
+import com.eviware.soapui.config.RestResourceConfig;
+import com.eviware.soapui.impl.rest.support.RestParamsPropertyHolder;
+import com.eviware.soapui.impl.wsdl.WsdlProject;
+import com.eviware.soapui.support.SoapUIException;
+import org.apache.xmlbeans.XmlException;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.eviware.soapui.impl.wsdl.WsdlProject;
-import org.junit.internal.matchers.TypeSafeMatcher;
+import java.io.IOException;
+
+import static com.eviware.soapui.utils.CommonMatchers.anEmptyArray;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class RestResourceTest
 {
-	@Test
-	public void shouldGetTemplateParams() throws Exception
+
+	private RestResource restResource;
+
+	@Before
+	public void setUp() throws XmlException, IOException, SoapUIException
 	{
 		WsdlProject project = new WsdlProject();
 		RestService restService = ( RestService )project.addNewInterface( "Test", RestServiceFactory.REST_TYPE );
-		RestResource resource = restService.addNewResource( "Resource", "/test" );
+		restResource = restService.addNewResource( "Resource", "/test" );
+	}
 
-		assertEquals( resource.getDefaultParams().length, 0 );
+	@Test
+	public void shouldGetTemplateParams() throws Exception
+	{
+		assertThat( restResource.getDefaultParams(), is( anEmptyArray() ) );
 
-		resource.setPath( "/{id}/test" );
-		assertEquals( resource.getDefaultParams().length, 0 );
-		assertEquals( "/{id}/test", resource.getFullPath() );
+		restResource.setPath( "/{id}/test" );
+		assertThat( restResource.getDefaultParams(), is( anEmptyArray() ) );
+		assertThat( restResource.getFullPath(), is("/{id}/test") );
 
-		RestResource subResource = resource.addNewChildResource( "Child", "{test}/test" );
-		assertEquals( "/{id}/test/{test}/test", subResource.getFullPath() );
+		RestResource subResource = restResource.addNewChildResource( "Child", "{test}/test" );
+		assertThat( subResource.getFullPath(), is( "/{id}/test/{test}/test" ) );
 	}
 
 	@Test
 	public void shouldIgnoreMatrixParamsOnPath() throws Exception
 	{
-		WsdlProject project = new WsdlProject();
-		RestService restService = ( RestService )project.addNewInterface( "Test", RestServiceFactory.REST_TYPE );
-		RestResource resource = restService.addNewResource( "Resource", "/test" );
-		resource.setPath( "/maps/api/geocode/xml;Param2=matrixValue2;address=16" );
+		String matrixParameterString = ";Param2=matrixValue2;address=16";
+		restResource.setPath( "/maps/api/geocode/xml" + matrixParameterString );
 
-		// asserts full path does not have the matrix params
-		assertEquals( "/maps/api/geocode/xml", resource.getFullPath() );
+		assertThat( restResource.getFullPath(), not( containsString( matrixParameterString ) ) );
 
-		RestResource subResource = resource.addNewChildResource( "Child", "{test}/test/version;ver=2" );
+		String childResourceParameterString = ";ver=2";
+		RestResource childResource = restResource.addNewChildResource( "Child", "{test}/test/version" + childResourceParameterString );
+		assertThat( childResource.getPath(), not(containsString( childResourceParameterString )) );
 
-		// asserts child resources's path does not have the matrix params
-		assertEquals( "{test}/test/version", subResource.getPath() );
-
-		// asserts child resources's full path does not have the matrix params
-		assertEquals( "/maps/api/geocode/xml/{test}/test/version", subResource.getFullPath() );
+		assertThat( childResource.getFullPath(), not(containsString( matrixParameterString )) );
+		assertThat( childResource.getFullPath(), not(containsString( childResourceParameterString )) );
 	}
 
-	@Ignore("Not consistent with current model, but this is how it should work!")
 	@Test
-	public void alwaysAddsParametersLastInFullPath() throws Exception
+	public void shouldIgnoreMatrixParamsWithoutValueOnPath() throws Exception
 	{
-		String parameterName = "some_param_name";
-		String parameterValue = "the_very_special_value";
-		RestResource parentResource = ModelItemFactory.makeRestResource();
-		parentResource.setPath( "/parent" );
-		RestParamProperty parameter = parentResource.addProperty( parameterName );
-		parameter.setValue( parameterValue );
-		RestResource childResource = parentResource.addNewChildResource( "child", "the_child" );
+		String matrixParameterString = ";Param2=1;address=";
+		restResource.setPath( "/maps/api/geocode/xml" + matrixParameterString );
 
-		//TODO: Replace with the new CommonMatchers.endsWith() method when this is merged back
-		String matrixParametersString = ";" + parameterName + "=" + parameterValue;
-		assertThat(childResource.getFullPath(), endsWith(matrixParametersString));
+		assertThat( restResource.getFullPath(), not( containsString( matrixParameterString ) ) );
+
+		String childResourceParameterString = ";ver=";
+		RestResource childResource = restResource.addNewChildResource( "Child", "{test}/test/version" + childResourceParameterString );
+		assertThat( childResource.getPath(), not(containsString( childResourceParameterString )) );
+
+		assertThat( childResource.getFullPath(), not(containsString( matrixParameterString )) );
+		assertThat( childResource.getFullPath(), not(containsString( childResourceParameterString )) );
 	}
 
-
-
-	private Matcher<String> endsWith(final String suffix)
+	@Test
+	public void shouldListenToChangesInConfiguredParameters() throws Exception
 	{
-		return new TypeSafeMatcher<String>()
-		{
-			@Override
-			public boolean matchesSafely( String s )
-			{
-				return s.endsWith( suffix );
-			}
+		RestService parentService = restResource.getService();
+		RestResourceConfig config = RestResourceConfig.Factory.newInstance();
+		RestParametersConfig restParametersConfig = config.addNewParameters();
+		RestParameterConfig parameterConfig = restParametersConfig.addNewParameter();
+		String parameterName = "theName";
+		parameterConfig.setName( parameterName );
+		parameterConfig.setStyle( RestParameterConfig.Style.Enum.forInt( RestParamsPropertyHolder.ParameterStyle.QUERY.ordinal()) );
+		config.setPath( "/actual_path");
 
-			@Override
-			public void describeTo( Description description )
-			{
-				description.appendText( "a string ending with " + suffix );
-			}
-		};
+		RestResource restResource = new RestResource( parentService, config );
+		restResource.getParams().getProperty( parameterName ).setStyle( RestParamsPropertyHolder.ParameterStyle.TEMPLATE);
+		assertThat( restResource.getPath(), containsString(parameterName ));
+
 	}
+
+	@Test
+	public void shouldRemoveFormerTemplateParametersFromPath() throws Exception
+	{
+		RestService parentService = restResource.getService();
+		RestResourceConfig config = RestResourceConfig.Factory.newInstance();
+		RestParametersConfig restParametersConfig = config.addNewParameters();
+		RestParameterConfig parameterConfig = restParametersConfig.addNewParameter();
+		String parameterName = "theName";
+		parameterConfig.setName( parameterName );
+		parameterConfig.setStyle( RestParameterConfig.Style.Enum.forInt( RestParamsPropertyHolder.ParameterStyle.TEMPLATE.ordinal() ) );
+		config.setPath( "/actual_path");
+
+		RestResource restResource = new RestResource( parentService, config );
+		restResource.getParams().getProperty( parameterName ).setStyle( RestParamsPropertyHolder.ParameterStyle.QUERY);
+		assertThat( restResource.getPath(), not( containsString( parameterName ) ));
+
+	}
+
 }

@@ -12,24 +12,14 @@
 
 package com.eviware.soapui.impl.rest.support;
 
+import com.eviware.soapui.impl.rest.RestRequest;
+import junit.framework.JUnit4TestAdapter;
+import org.junit.Test;
+
 import static com.eviware.soapui.utils.ModelItemFactory.makeRestRequest;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-
-import java.io.File;
-
-import junit.framework.JUnit4TestAdapter;
-
-import org.junit.Test;
-
-import com.eviware.soapui.impl.rest.RestRequest;
-import com.eviware.soapui.impl.rest.RestRequestInterface;
-import com.eviware.soapui.impl.rest.RestResource;
-import com.eviware.soapui.impl.rest.RestService;
-import com.eviware.soapui.impl.rest.RestServiceFactory;
-import com.eviware.soapui.impl.wsdl.WsdlProject;
 
 public class RestUtilsTestCase
 {
@@ -49,7 +39,6 @@ public class RestUtilsTestCase
 		assertEquals( "id", params[0] );
 		assertEquals( "test", params[1] );
 	}
-
 
 	@Test
 	public void expandsRestRequestPathsWithoutTemplateParameters() throws Exception
