@@ -1,6 +1,7 @@
 package com.eviware.soapui.support.swing;
 
 import com.eviware.soapui.support.UISupport;
+import org.jdesktop.swingx.JXTable;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -17,6 +18,8 @@ public abstract class JTableFactory
 
 	public abstract JTable makeJTable(TableModel tableModel);
 
+	public abstract JXTable makeJXTable(TableModel tableModel);
+
 	public static JTableFactory getInstance() {
 		 return new DefaultJTableFactory();
 	}
@@ -27,6 +30,34 @@ public abstract class JTableFactory
 		public JTable makeJTable( TableModel tableModel )
 		{
 			return UISupport.isMac() ? makeStripedTable( tableModel ) : new JTable( tableModel );
+		}
+
+		@Override
+		public JXTable makeJXTable( TableModel tableModel )
+		{
+			return UISupport.isMac() ? makeStripedJXTable( tableModel ) : new JXTable( tableModel );
+		}
+
+		private JXTable makeStripedJXTable( final TableModel tableModel )
+		{
+			JXTable stripedJxTable = new JXTable( tableModel )
+			{
+				@Override
+				public Component prepareRenderer( TableCellRenderer renderer, int row, int column )
+				{
+					Component defaultRenderer = super.prepareRenderer( renderer, row, column );
+					applyStripesToRenderer( row, defaultRenderer );
+					return defaultRenderer;
+				}
+
+				@Override
+				public boolean getShowVerticalLines()
+				{
+					return false;
+				}
+			};
+			setGridAttributes( stripedJxTable );
+			return stripedJxTable;
 		}
 
 		private JTable makeStripedTable( final TableModel tableModel )
@@ -47,10 +78,16 @@ public abstract class JTableFactory
 					return false;
 				}
 			};
-			stripedTable.setShowGrid( false );
-			stripedTable.setIntercellSpacing( new Dimension(0, 0) );
+			setGridAttributes( stripedTable );
 			return stripedTable;
 		}
+
+	}
+
+	public static void setGridAttributes( JTable stripedTable )
+	{
+		stripedTable.setShowGrid( false );
+		stripedTable.setIntercellSpacing( new Dimension(0, 0) );
 	}
 
 	public static void applyStripesToRenderer( int row, Component defaultRenderer )
