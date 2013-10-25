@@ -92,6 +92,7 @@ public abstract class JTableFactory
 
 	public static void applyStripesToRenderer( int row, Component defaultRenderer )
 	{
+		Color fontColor = defaultRenderer.getForeground();
 		if( row % 2 == 1 )
 		{
 			defaultRenderer.setBackground( new Color( 241, 244, 247 ) );
@@ -100,5 +101,6 @@ public abstract class JTableFactory
 		{
 			defaultRenderer.setBackground( Color.WHITE );
 		}
+		defaultRenderer.setForeground( fontColor);
 	}
 }
