@@ -31,12 +31,24 @@ import com.jgoodies.binding.PresentationModel;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlBeans;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import javax.xml.namespace.QName;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -86,7 +98,7 @@ public class RestParamsTable extends JPanel
 			public void removeEditor()
 			{
 				TableCellEditor editor = getCellEditor();
-				// must be called here to remove the editor and to avoid an inifinite
+				// must be called here to remove the editor and to avoid an infinite
 				// loop, because the table is an editor listener and the
 				// editingCanceled method calls this removeEditor method
 				super.removeEditor();
